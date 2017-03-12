@@ -7,28 +7,36 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileInputStream;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+
+import ca.lavallee.config.AppConfig;
 
 public class SoundEffects extends JFrame {
 	private File soundFolder = new File(this.getClass().getResource("/sounds").getPath());
+	private final AppConfig config;
 	
-	public SoundEffects() {
+	public SoundEffects(AppConfig config) {
+		this.config = config;
 		initComponents();
 	}
 	private void initComponents() {
 		this.setTitle("Sound Effects");
-		JPanel panel = new ButtonPanel();
+		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+		SoundEffectsPanel mainPanel = new SoundEffectsPanel(config);
+		getContentPane().add(mainPanel);
+//		JPanel panel = new LogoPanel();
+//		getContentPane().add(panel);
 		
-		getContentPane().add(panel);
+//		panel = new ButtonPanel();
+//		
+//		getContentPane().add(panel);
 		pack();
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 		int x = (d.width - getWidth()) / 2; 
@@ -37,11 +45,6 @@ public class SoundEffects extends JFrame {
 
 	}
 
-	public static void main(String[] args) {
-		SoundEffects app = new SoundEffects();
-		app.setVisible(true);
-	}
-	
 	class ButtonPanel extends JPanel {
 		
 		public ButtonPanel() {

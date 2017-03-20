@@ -2,7 +2,6 @@ package ca.lavallee.soundeffects;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,5 +51,7 @@ public class SoundEffectsMain {
 		SoundEffectsMain main = new SoundEffectsMain();
 		main.startup();
 	}
+	
+	
 
 }

@@ -1,7 +1,6 @@
 package ca.lavallee.soundeffects.swing;
 
 import java.awt.BorderLayout;
-import java.io.File;
 
 import javax.swing.JPanel;
 
@@ -21,7 +20,7 @@ public class SoundEffectsPanel extends JPanel {
 		LogoPanel logo = new LogoPanel();
 		this.add(logo, BorderLayout.NORTH);
 		
-		PlaySoundsPanel playSounds = new PlaySoundsPanel(new File(this.getClass().getResource("/sounds/birds").getPath()));
+		PlaySoundsPanel playSounds = new PlaySoundsPanel("/sounds/birds");
 		this.add(playSounds, BorderLayout.CENTER);
 		
 		FolderChooserPanel folderChooser = new FolderChooserPanel(appConfig, playSounds);

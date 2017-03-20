@@ -1,8 +1,6 @@
 package ca.lavallee.soundeffects.swing;
 
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.io.IOException;
 import java.net.URL;
 import java.util.logging.Level;
@@ -12,6 +10,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+@SuppressWarnings("serial")
 public class LogoPanel extends JPanel {
 	Logger logger = Logger.getLogger(this.getClass().getName());
 	

@@ -4,7 +4,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.IOException;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -13,15 +13,18 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import ca.lavallee.file.JarReaderUtils;
+
 @SuppressWarnings("serial")
 public class PlaySoundsPanel extends JPanel {
 	private JPanel buttonPanel;
 	
-	public PlaySoundsPanel(File soundFolder) {
+	public PlaySoundsPanel(String soundFolder) {
+//		System.out.println("Sound folder: " + soundFolder);
 		initComponents(soundFolder);
 	}
 	
-	private void initComponents(File soundFolder) {
+	private void initComponents(String soundFolder) {
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridBagLayout());
 		setSoundFolder(soundFolder);
@@ -31,18 +34,25 @@ public class PlaySoundsPanel extends JPanel {
 				
 	}
 	
-	public void setSoundFolder(File soundFolder) {
+	public void setSoundFolder(String soundFolder) {
+//		try {
+//			List<String> names = JarFileUtils.listFoldersUsingClass(getClass(), soundFolder.getPath());
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
 		buttonPanel.removeAll();
 		
 		GridBagConstraints c = new GridBagConstraints();
 		
 		int y = 0;
-		for (File file: soundFolder.listFiles()) {
-			if (file.isFile() && getExtension(file).equalsIgnoreCase("wav")) {
-				JButton btn = new JButton(file.getName().substring(0, file.getName().length() - 4));
+		try {
+			for (String fullPath: JarReaderUtils.listFilesUsingClass(getClass(), soundFolder, "wav")) {
+				String fileName = JarReaderUtils.getFileName(fullPath);
+				JButton btn = new JButton(fileName.substring(0, fileName.length() - 4));
 				btn.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						playClip(file);
+						playClip(fullPath);
 					}
 				});
 				c = new GridBagConstraints();
@@ -50,33 +60,28 @@ public class PlaySoundsPanel extends JPanel {
 				c.gridx = 0;
 				c.gridy = y++;
 				c.weightx = 1.0;
-				
+
 				buttonPanel.add(btn, c);
 			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		buttonPanel.revalidate();
 		buttonPanel.repaint();
-	}
+	}	
 	
-	
-	private String getExtension(File file) {
-		String extension = file.getName();
-		while (extension.contains(".")) {
-			extension = extension.substring(extension.indexOf(".") + 1);
+	private void playClip(String waveFile) {
+//		System.out.println("playClip(" + waveFile + ")");
+		try {
+			Clip clip = AudioSystem.getClip();
+			AudioInputStream inputStream = AudioSystem.getAudioInputStream(getClass().getResourceAsStream(waveFile));
+			clip.open(inputStream);
+			clip.start(); 
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
 		}
-		return extension;
-	}
 
-	private void playClip(File waveFile) {
-	      try {
-	          Clip clip = AudioSystem.getClip();
-	          AudioInputStream inputStream = AudioSystem.getAudioInputStream(waveFile);
-	          clip.open(inputStream);
-	          clip.start(); 
-	        } catch (Exception e) {
-	          System.err.println(e.getMessage());
-	        }
-		
 	}
 
 

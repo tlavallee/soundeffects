@@ -43,25 +43,26 @@
 
 	<build>
 		<plugins>
-<!-- 			<plugin> -->
-<!-- 				<groupId>com.github.github</groupId> -->
-<!-- 				<artifactId>downloads-maven-plugin</artifactId> -->
-<!-- 				<version>0.6</version> -->
-<!-- 				<configuration> -->
-<!-- 					<description>Official ${project.name} build of the ${project.version} release</description> -->
-<!-- 					<override>true</override> -->
-<!-- 					<includeAttached>true</includeAttached> -->
-<!-- 					<server>github</server> -->
-<!-- 				</configuration> -->
-<!-- 				<executions> -->
-<!-- 					<execution> -->
-<!-- 						<goals> -->
-<!-- 							<goal>upload</goal> -->
-<!-- 						</goals> -->
-<!-- 						<phase>install</phase> -->
-<!-- 					</execution> -->
-<!-- 				</executions> -->
-<!-- 			</plugin> -->
+			<!-- <plugin> -->
+			<!-- <groupId>com.github.github</groupId> -->
+			<!-- <artifactId>downloads-maven-plugin</artifactId> -->
+			<!-- <version>0.6</version> -->
+			<!-- <configuration> -->
+			<!-- <description>Official ${project.name} build of the ${project.version} 
+				release</description> -->
+			<!-- <override>true</override> -->
+			<!-- <includeAttached>true</includeAttached> -->
+			<!-- <server>github</server> -->
+			<!-- </configuration> -->
+			<!-- <executions> -->
+			<!-- <execution> -->
+			<!-- <goals> -->
+			<!-- <goal>upload</goal> -->
+			<!-- </goals> -->
+			<!-- <phase>install</phase> -->
+			<!-- </execution> -->
+			<!-- </executions> -->
+			<!-- </plugin> -->
 			<plugin>
 				<groupId>com.github.github</groupId>
 				<artifactId>site-maven-plugin</artifactId>
@@ -158,6 +159,28 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>ca.lavallee.soundeffects.SoundEffectsMain</mainClass>
+								</transformer>
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 

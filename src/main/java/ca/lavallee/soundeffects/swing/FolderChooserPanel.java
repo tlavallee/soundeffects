@@ -1,16 +1,16 @@
 package ca.lavallee.soundeffects.swing;
 
-import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import ca.lavallee.config.AppConfig;
+import ca.lavallee.file.JarReaderUtils;
 
 @SuppressWarnings("serial")
 public class FolderChooserPanel extends JPanel implements TreeSelectionListener {
@@ -39,29 +39,36 @@ public class FolderChooserPanel extends JPanel implements TreeSelectionListener 
 //        tree.setRootVisible(false);
  
         
-		File folder = new File(this.getClass().getResource("/sounds").getPath());
-		addSoundFolder(folder, top);
+		addSoundFolder("/sounds", top);
 
 		for (String folderName: appConfig.getStringValues("folders")) {
-			folder = new File(folderName);
-	        DefaultMutableTreeNode folderNode = new DefaultMutableTreeNode(new SoundFolderNode(folder, folder.getName()));
+			String displayName = folderName;
+			if (displayName.endsWith("/")) {
+				JarReaderUtils.getFileName(folderName.substring(0, folderName.length() - 1));
+			}
+	        DefaultMutableTreeNode folderNode = new DefaultMutableTreeNode(new SoundFolderNode(folderName, displayName));
 	        top.add(folderNode);
-			addSoundFolder(new File(folderName), top);
+			addSoundFolder(folderName, top);
 		}
 		
         this.add(tree);
 	}
 
-	private void addSoundFolder(File folder, DefaultMutableTreeNode parent) {
-		for (File file: folder.listFiles()) {
-			if (file.isDirectory()) {
-		        DefaultMutableTreeNode folderNode = new DefaultMutableTreeNode(new SoundFolderNode(file, file.getName()));
-		        parent.add(folderNode);
-		        addSoundFolder(file, folderNode);
-			}	
+	private void addSoundFolder(String folder, DefaultMutableTreeNode parent) {
+//		System.out.println("addSoundFolder(" + folder + ")");
+		try {
+			for (String subFolder: JarReaderUtils.listFoldersUsingClass(getClass(), folder)) {
+				String displayName = JarReaderUtils.getFileName(subFolder.substring(0, subFolder.length() - 1));
+				DefaultMutableTreeNode folderNode = new DefaultMutableTreeNode(new SoundFolderNode(subFolder, displayName));
+				parent.add(folderNode);
+				addSoundFolder(subFolder, folderNode);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void valueChanged(TreeSelectionEvent arg0) {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
@@ -69,26 +76,26 @@ public class FolderChooserPanel extends JPanel implements TreeSelectionListener 
 
 		if (node == null) return;
 
-		Object nodeInfo = node.getUserObject();
+//		Object nodeInfo = node.getUserObject();
 		if (node.isLeaf()) {
-			System.out.println("Leaf");
+//			System.out.println("Leaf");
 			SoundFolderNode soundFolder = (SoundFolderNode) node.getUserObject();
 			playSounds.setSoundFolder(soundFolder.getFolder());
 		} else {
 	        tree.expandRow(0);
-			System.out.println("Not leaf");
+//			System.out.println("Not leaf");
 		}
-		System.out.println(nodeInfo.toString());
+//		System.out.println(nodeInfo.toString());
 	}
 	
 	class SoundFolderNode {
-		private final File folder;
+		private final String folder;
 		private final String name;
-		public SoundFolderNode(File folder, String name) {
+		public SoundFolderNode(String folder, String name) {
 			this.folder = folder;
 			this.name = name;
 		}
-		public File getFolder() {
+		public String getFolder() {
 			return folder;
 		}
 		public String getName() {
